@@ -1,0 +1,18 @@
+diff a/direnv.el b/direnv.el
+--- a/direnv.el
++++ b/direnv.el
+@@ -122,9 +122,8 @@
+               (with-temp-buffer
+                 (unless (zerop exit-code)
+                   (insert-file-contents stderr-tempfile)
+-                  (display-warning
+-                   'direnv
++                  (message
+                    (format-message
+-                    "Error running direnv (exit code %d):\n%s\nOpen buffer ‘%s’ for full output."
+-                    exit-code (buffer-string) direnv--output-buffer-name)))))))
++                    "Error running direnv (exit code %d):\n%s"
++                    exit-code (buffer-string))))))))
+       (delete-file stderr-tempfile))))
+
+ (defun direnv--file-size (name)

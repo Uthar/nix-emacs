@@ -1,0 +1,18 @@
+Indent {} [] like '() - like in Cider with Clojure
+--- a/contrib/slime-cl-indent.el
++++ b/contrib/slime-cl-indent.el
+@@ -910,6 +910,12 @@
+                   ((eq (char-after (1- containing-sexp)) ?\#)
+                    ;; "#(...)"
+                    (setq calculated (1+ sexp-column)))
++                  ((eq (char-after containing-sexp) ?\{)
++                   ;; "{...}"
++                   (setq calculated (1+ sexp-column)))
++                  ((eq (char-after containing-sexp) ?\[)
++                   ;; "[...]"
++                   (setq calculated (1+ sexp-column)))
+                   ((null method)
+                    ;; If this looks like a call to a `def...' form,
+                    ;; think about indenting it as one, but do it
+
+Diff finished.  Fri Dec 17 22:13:48 2021

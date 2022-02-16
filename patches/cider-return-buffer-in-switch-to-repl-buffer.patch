@@ -1,0 +1,14 @@
+Return the repl buffer so that my open-in-repl-window advice works
+Returning the point number is meaningless anyway
+--- a/cider-mode.el
++++ b/cider-mode.el
+@@ -97,7 +97,8 @@
+     ;; then if necessary we update its namespace
+     (when set-namespace
+       (cider-repl-set-ns (with-current-buffer buffer (cider-current-ns))))
+-    (goto-char (point-max))))
++    (goto-char (point-max))
++    repl-buffer))
+
+ (defun cider-switch-to-repl-buffer (&optional set-namespace)
+   "Switch to current REPL buffer, when possible in an existing window.

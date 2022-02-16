@@ -1,0 +1,19 @@
+Skip displaying this annoying message
+--- a/flycheck.el
++++ b/flycheck.el
+@@ -3239,10 +3239,11 @@
+                (message "Error from syntax checker %s: %s"
+                         checker (or data "UNKNOWN!"))))
+             (`suspicious
+-             (when flycheck-mode
+-               (message "Suspicious state from syntax checker %s: %s"
+-                        checker (or data "UNKNOWN!")))
+-             (flycheck-report-status 'suspicious))
++             ;; (when flycheck-mode
++             ;;   (message "Suspicious state from syntax checker %s: %s"
++             ;;            checker (or data "UNKNOWN!")))
++             ;; (flycheck-report-status 'suspicious)
++             )
+             (`finished
+              (when flycheck-mode
+                ;; Only report errors from the checker if Flycheck Mode is
