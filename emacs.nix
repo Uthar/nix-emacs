@@ -38,6 +38,7 @@ let
         };
         version = "28.0.91";
         patches = [ ./patches/tramp-detect-wrapped-gvfsd.patch ] ;
+        meta = o.meta // { mainProgram = "emacs"; };
       });
 
   build-elisp-package = { name, src }:
