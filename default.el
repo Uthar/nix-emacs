@@ -360,8 +360,8 @@
   (slime-company-completion 'fuzzy)
   (slime-repl-auto-right-margin t)
   (slime-repl-history-size 10000)
-  (common-lisp-hyperspec-root "@clhs@/")
-  (common-lisp-hyperspec-symbol-table "@clhs@/Data/Map_Sym.txt")
+  (common-lisp-hyperspec-root "@clhs@/HyperSpec/")
+  (common-lisp-hyperspec-symbol-table "@clhs@/HyperSpec/Data/Map_Sym.txt")
   :bind ("C-c s" . 'slime-selector)
   :config
   (advice-add 'slime :around 'call-with-repl-window)
