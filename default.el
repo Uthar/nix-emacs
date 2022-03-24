@@ -16,6 +16,9 @@
 
 (use-package diminish)
 
+(diminish 'auto-revert-mode)
+(diminish 'eldoc-mode)
+
 (use-package browse-kill-ring)
 
 (use-package evil-matchit
