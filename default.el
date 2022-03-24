@@ -538,6 +538,10 @@
   (interactive)
   (ansi-term "bash"))
 
+(defun xdg-open ()
+  (interactive)
+  (start-process "xdg-open" nil "xdg-open" (ffap-string-at-point)))
+
 ;; keys
 
 (bind-keys* ("<f1>" . toggle-repl-window)
