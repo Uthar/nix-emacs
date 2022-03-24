@@ -6,6 +6,7 @@
 (rplaca mouse-wheel-scroll-amount 2)
 (setf mouse-wheel-progressive-speed nil)
 (put 'if 'lisp-indent-function 4)
+(put 'if-let 'lisp-indent-function 4)
 
 (use-package tetris
   :commands tetris
