@@ -560,3 +560,5 @@
             ("<f10>" . delete-window)
             ("<f11>" . kill-buffer-and-window)
             ("<f12>" . universal-argument))
+
+(require 'notifications)
