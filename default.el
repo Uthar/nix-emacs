@@ -53,6 +53,7 @@
 (use-package magit
   :custom
   (magit-completing-read-function 'ivy-completing-read)
+  (magit-define-global-key-bindings nil)
   :hook
   (after-save . magit-after-save-refresh-status)
   :config
