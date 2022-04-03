@@ -28,13 +28,11 @@ let
   emacs' =
     (pkgs.emacs.override { nativeComp = true; srcRepo = true; })
       .overrideAttrs (o: {
-        src = let
-          rev = "5ba9c8c364f652221a0ac9ed918a831e122581db";
-        in builtins.fetchTarball {
-          url = "https://git.savannah.gnu.org/cgit/emacs.git/snapshot/emacs-${rev}.tar.gz";
-          sha256 = "0gh2qqcsmjych3xazq5n6s430yfnc5k1hmc7vin6c2scnlswlbz0";
+        src = builtins.fetchTarball {
+          url = "https://git.savannah.gnu.org/cgit/emacs.git/snapshot/emacs-28.1.tar.gz";
+          sha256 = "01mfwl6lh79f9icrfw07dns3g0nqwc06k6fm3gr45iv1bjgg0z8g";
         };
-        version = "28.0.92";
+        version = "28.1";
         patches = [ ./patches/tramp-detect-wrapped-gvfsd.patch ] ;
         meta = o.meta // { mainProgram = "emacs"; };
       });
