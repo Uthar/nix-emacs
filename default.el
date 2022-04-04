@@ -50,6 +50,8 @@
   :bind-keymap ("C-c p" . projectile-command-map)
   :config (projectile-mode))
 
+(use-package efsl)
+
 (use-package magit
   :custom
   (magit-completing-read-function 'ivy-completing-read)

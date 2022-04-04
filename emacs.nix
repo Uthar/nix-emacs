@@ -51,6 +51,14 @@ let
     };
   };
 
+  efsl = build-elisp-package {
+    name = "modus-themes";
+    src = fetchTarball {
+      url = "https://fossil.galkowski.xyz/efsl/tarball/feeaf8aa67fa2508/efsl.tgz";
+      sha256 = "12iwy6dkxhki3bhlkalz77xw5n0gwb831aaqjpkicfi4i2jjibb9";
+    };
+  };
+
   withPatches = drv: patches: drv.overrideAttrs (o: { inherit patches; });
 
   emacsWithPackages = (emacsPackagesNgGen emacs').emacsWithPackages;
@@ -59,6 +67,8 @@ in emacsWithPackages(epkgs:
 
   [
     defaultEl
+    modus-themes
+    efsl
   ]
 
   ++
@@ -67,7 +77,6 @@ in emacsWithPackages(epkgs:
     company
     counsel
     ivy
-    modus-themes
     undo-tree
     which-key
   ])
