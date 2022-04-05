@@ -144,6 +144,9 @@
 
 (use-package emacs
   :custom
+  (completions-detailed t)
+  (read-minibuffer-restore-windows nil)
+  (mode-line-compact 'long)
   (enable-dir-local-variables nil)
   (enable-local-variables nil)
   (server-client-instructions nil)
@@ -210,6 +213,7 @@
   (evil-undo-system 'undo-tree)
   (evil-want-keybinding nil)
   :config
+  (evil-set-initial-state 'help-mode 'emacs)
   (evil-mode 1)
   (evil-global-set-key 'insert (kbd "C-r") nil)
   (dolist (state '(motion insert))
