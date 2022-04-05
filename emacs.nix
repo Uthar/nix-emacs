@@ -52,10 +52,10 @@ let
   };
 
   efsl = build-elisp-package {
-    name = "modus-themes";
+    name = "efsl";
     src = fetchTarball {
-      url = "https://fossil.galkowski.xyz/efsl/tarball/feeaf8aa67fa2508/efsl.tgz";
-      sha256 = "12iwy6dkxhki3bhlkalz77xw5n0gwb831aaqjpkicfi4i2jjibb9";
+      url = "https://fossil.galkowski.xyz/efsl/tarball/7dc9d6e668036392/efsl.tgz";
+      sha256 = "182p5mgbnjvylh347cmb1ssngpzcf556wd7w48zab4rq1n158jpw";
     };
   };
 
