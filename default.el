@@ -195,6 +195,7 @@
   (string= file (expand-file-name recentf-save-file)))
 
 (add-to-list 'recentf-exclude 'recentf-save-file-p)
+(add-to-list 'recentf-exclude (regexp-opt '("ci-comment-")))
 
 (defun recentf-save-current-buffer ()
   (let ((file-name (buffer-file-name (current-buffer))))
