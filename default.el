@@ -8,6 +8,9 @@
 (put 'if 'lisp-indent-function 4)
 (put 'if-let 'lisp-indent-function 4)
 
+(put 'narrow-to-region 'disabled nil)
+(put 'erase-buffer 'disabled nil)
+
 (use-package tetris
   :commands tetris
   :config
