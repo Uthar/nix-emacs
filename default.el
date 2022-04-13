@@ -211,7 +211,7 @@
   :custom
   (evil-want-C-u-scroll t)
   (evil-kill-on-visual-paste nil)
-  (evil-undo-system 'undo-tree)
+  (evil-undo-system 'undo-redo)
   (evil-want-keybinding nil)
   :config
   (evil-set-initial-state 'help-mode 'emacs)
@@ -242,16 +242,6 @@
 (use-package evil-surround
   :after evil
   :config (global-evil-surround-mode 1))
-
-(use-package undo-tree
-  :diminish
-  :custom
-  (undo-tree-limit undo-limit)
-  (undo-tree-strong-limit undo-strong-limit)
-  (undo-tree-outer-limit undo-outer-limit)
-  (undo-tree-auto-save-history t)
-  (undo-tree-history-directory-alist `(("." . ,(state-dir "undo-tree-history"))))
-  :config (global-undo-tree-mode))
 
 (use-package anzu
   :diminish
