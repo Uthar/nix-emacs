@@ -54,8 +54,8 @@ let
   efsl = build-elisp-package {
     name = "efsl";
     src = fetchTarball {
-      url = "https://fossil.galkowski.xyz/efsl/tarball/59c44e8bd7aff2f2/efsl.tgz";
-      sha256 = "1bb4rxahk8d065qjgaxs3clfixh5ijlcx9i8ml2ngq47w02f6i64";
+      url = "https://fossil.galkowski.xyz/efsl/tarball/b44ab8a12807f9b6/efsl.tgz";
+      sha256 = "09zfmym6ld3cnl5m4y6klbg4s086wymfda292sqhjda0jgca27al";
     };
   };
 
