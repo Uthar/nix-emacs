@@ -369,6 +369,8 @@
   (common-lisp-hyperspec-symbol-table "@clhs@/HyperSpec/Data/Map_Sym.txt")
   :bind ("C-c s" . 'slime-selector)
   :config
+  (add-to-list 'evil-buffer-regexps
+               (cons (regexp-opt '("*slime-description*")) 'emacs))
   (advice-add 'slime :around 'call-with-repl-window)
   (advice-add 'slime-repl :around 'call-with-repl-window)
   (bind-key (kbd "C-c C-z") 'slime-repl 'slime-mode-map)
