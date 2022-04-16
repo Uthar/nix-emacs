@@ -130,7 +130,7 @@ in emacsWithPackages(epkgs:
     evil
     evil-matchit
     evil-surround
-    evil-collection
+    # evil-collection
 
     # Convenience modes for working with programming languages.
     # Syntax highlighting, completion, indentation etc.
@@ -139,8 +139,8 @@ in emacsWithPackages(epkgs:
     glsl-mode
     go-mode
     groovy-mode
-    lsp-mode
-    lsp-python-ms
+    # lsp-mode
+    # lsp-python-ms
     nix-mode
     slime'
     slime-company
@@ -163,7 +163,7 @@ in emacsWithPackages(epkgs:
 
     # Very small package that simply adds a function to switch between the
     # built-in dark and light modus themes - modus-operandi and modus-vivendi.
-    modus-themes
+    # modus-themes
 
     # Utilities for managing "projects", which are simply explicitly named
     # directories.
