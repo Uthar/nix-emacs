@@ -38,10 +38,11 @@
 
 (use-package wgrep)
 
-(use-package hl-todo
-  :custom
-  (hl-todo-highlight-punctuation ":")
-  :config (global-hl-todo-mode))
+(add-hook 'prog-mode-hook
+  (lambda ()
+    (font-lock-add-keywords nil
+	  '(("TODO" 0 '(:foreground "red" :weight bold) t)
+        ("NOTE" 0 '(:foreground "dark green" :weight bold) t)))))
 
 (use-package projectile
   :custom
