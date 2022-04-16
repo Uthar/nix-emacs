@@ -22,8 +22,6 @@
 (diminish 'auto-revert-mode)
 (diminish 'eldoc-mode)
 
-(use-package browse-kill-ring)
-
 (use-package evil-matchit
   :after evil
   :config (global-evil-matchit-mode))
