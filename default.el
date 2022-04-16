@@ -196,7 +196,8 @@
     (recentf-mode)
     (savehist-mode)
     (context-menu-mode)
-    (set-language-environment "UTF-8")))
+    (set-language-environment "UTF-8")
+    (add-to-list 'permanently-enabled-local-variables 'mode)))
 
 (add-hook 'before-save-hook
   (lambda ()
