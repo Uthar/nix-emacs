@@ -86,7 +86,6 @@ in emacsWithPackages(epkgs:
   (with epkgs.melpaPackages; [
     ag
     anzu
-    browse-kill-ring
     (withPatches cider [ ./patches/cider-return-buffer-in-switch-to-repl-buffer.patch ])
     company-terraform
     diminish
