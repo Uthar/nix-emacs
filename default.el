@@ -11,9 +11,7 @@
 (add-hook 'emacs-startup-hook
   (lambda ()
     (message "Emacs ready in %s with %d garbage collections."
-             (format "%.2f seconds"
-                     (float-time
-                      (time-subtract after-init-time before-init-time)))
+             (emacs-init-time)
              gcs-done)
     (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value)))))
 
@@ -43,14 +41,14 @@
   (lambda ()
     (global-evil-matchit-mode)))
 
-(add-hook 'after-init-hook
-  (lambda ()
-    (global-page-break-lines-mode)))
+;; (add-hook 'after-init-hook
+;;   (lambda ()
+;;     (global-page-break-lines-mode)))
 
+(setq direnv-always-show-summary nil)
 (add-hook 'after-init-hook
   (lambda ()
-    (direnv-mode)
-    (setq direnv-always-show-summary nil)))
+    (direnv-mode)))
 
 (add-hook 'prog-mode-hook
   (lambda ()
@@ -58,42 +56,46 @@
 	  '(("TODO" 0 '(:foreground "red" :weight bold) t)
         ("NOTE" 0 '(:foreground "dark green" :weight bold) t)))))
 
+;; projectile
+(setq projectile-enable-caching t
+      projectile-completion-system 'ivy
+      projectile-track-known-projects-automatically nil)
 
 (add-hook 'after-init-hook
   (lambda ()
     (projectile-mode)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (setq projectile-enable-caching t
-          projectile-completion-system 'ivy
-          projectile-track-known-projects-automatically nil)))
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)))
+
+;; magit
+(setq magit-completing-read-function 'ivy-completing-read
+      magit-define-global-key-bindings nil)
 
 (add-hook 'magit-mode-hook
   (lambda ()
-    (setq magit-completing-read-function 'ivy-completing-read
-          magit-define-global-key-bindings nil)
     (dotimes (i 4)
       (let* ((n (1+ i))
              (command (intern (format "magit-section-show-level-%i-all" n))))
         (define-key magit-section-mode-map (kbd (format "M-%i" n)) nil)
         (define-key magit-section-mode-map (kbd (format "C-%i" n)) command)))))
 
-(defun toggle-hook (hook function)
-  (if (and (consp (symbol-value hook))
-           (memq function (symbol-value hook)))
-      (remove-hook hook function)
-      (add-hook hook function)))
 
-(defun vc-annotate-toggle-annotation-visibility* ()
-  (toggle-hook 'vc-annotate-mode-hook 'vc-annotate-toggle-annotation-visibility))
 
-(advice-add 'vc-annotate :before
-  (lambda ()
-    (define-key vc-annotate-mode-map (kbd "v")
+;; vc-annotate
+(with-eval-after-load "vc-annotate"
+  (defun toggle-hook (hook function)
+    (if (and (consp (symbol-value hook))
+             (memq function (symbol-value hook)))
+        (remove-hook hook function)
+        (add-hook hook function)))
+  (defun vc-annotate-toggle-annotation-visibility* ()
+    (toggle-hook 'vc-annotate-mode-hook 'vc-annotate-toggle-annotation-visibility))
+  (define-key vc-annotate-mode-map (kbd "v")
       (lambda ()
         (interactive)
         (vc-annotate-toggle-annotation-visibility)
-        (vc-annotate-toggle-annotation-visibility*)))))
+        (vc-annotate-toggle-annotation-visibility*))))
 
+;; winum
 (add-hook 'after-init-hook
   (lambda ()
     (winum-mode)
@@ -101,25 +103,24 @@
       (let* ((n (1+ i))
              (key (kbd (format "M-%i" n)))
              (command (intern (format "winum-select-window-%i" n))))
-        (message "The key is: %s" key)
         (with-eval-after-load "diff"
           (define-key diff-mode-map key nil))
         (with-eval-after-load "term"
           (define-key term-raw-map key command))
         (global-set-key key command)))))
 
-(defun dired-toggle-hidden ()
-  (interactive)
-  (if (string-match-p "a" dired-actual-switches)
-      (dired "." (remove ?a dired-listing-switches))
-      (dired "." (concat dired-listing-switches "a")))
-  (setf dired-listing-switches dired-actual-switches))
-
+;; dired
 (setq
   dired-kill-when-opening-new-dired-buffer t
   dired-listing-switches "--group-directories-first -lh")
 
 (with-eval-after-load "dired"
+  (defun dired-toggle-hidden ()
+    (interactive)
+    (if (string-match-p "a" dired-actual-switches)
+        (dired "." (remove ?a dired-listing-switches))
+        (dired "." (concat dired-listing-switches "a")))
+    (setf dired-listing-switches dired-actual-switches))
   (define-key dired-mode-map (kbd "M-h") 'dired-toggle-hidden)
   (define-key dired-mode-map "N" nil)
   (define-key dired-mode-map "n" nil)
@@ -132,6 +133,7 @@
   (evil-local-set-key 'normal "l" 'dired-find-file)
   (evil-local-set-key 'normal "h" 'dired-up-directory)))
 
+;; diff
 (setq diff-font-lock-syntax nil)
 
 (add-hook 'diff-mode-hook
@@ -139,11 +141,13 @@
     (setq-local require-final-newline nil)
     (setq-local before-save-hook nil)))
 
+;; ivy
 (add-hook 'after-init-hook
   (lambda ()
     (ivy-mode t)
     (counsel-mode)))
 
+;; emacs
 (defun state-dir (dir)
   (expand-file-name (concat user-emacs-directory dir "/")))
 
@@ -151,7 +155,6 @@
   `(let ((inhibit-message t))
      ,@body))
 
-;; emacs
 (setq
  completions-detailed t
  read-minibuffer-restore-windows nil
@@ -193,7 +196,6 @@
     (recentf-mode)
     (savehist-mode)
     (context-menu-mode)
-    (advice-add 'display-startup-echo-area-message :around 'identity)
     (set-language-environment "UTF-8")))
 
 (add-hook 'before-save-hook
@@ -209,23 +211,17 @@
     (display-line-numbers-mode)))
 
 ;; recentf
-
 (with-eval-after-load "recentf"
-
   (defun recentf-save-file-p (file)
     (string= file (expand-file-name recentf-save-file)))
-
-  (add-to-list 'recentf-exclude 'recentf-save-file-p)
-  (add-to-list 'recentf-exclude (regexp-opt '("ci-comment-")))
-
   (defun recentf-save-current-buffer ()
     (let ((file-name (buffer-file-name (current-buffer))))
       (when file-name
         (recentf-add-file file-name)
         (with-inhibit-message (recentf-save-list)))))
-
+  (add-to-list 'recentf-exclude 'recentf-save-file-p)
+  (add-to-list 'recentf-exclude (regexp-opt '("ci-comment-")))
   (add-hook 'buffer-list-update-hook 'recentf-save-current-buffer))
-
 
 ;; evil
 (setq
@@ -303,10 +299,14 @@
 ;;   :diminish
 ;;   :config (global-flycheck-mode))
 
+;; flycheck
+(add-hook 'after-init-hook 'global-flycheck-mode)
 
+;; yaml
 (with-eval-after-load "yaml-mode"
   (add-hook 'yaml-mode-hook 'display-line-numbers-mode))
 
+;; nix
 (with-eval-after-load "nix-mode"
   (defun nix-prefetch-tarball-at-point ()
     (interactive)
@@ -320,6 +320,7 @@
   (define-key nix-mode-map (kbd "C-x n h") 'nix-prefetch-tarball-at-point))
 
 
+;; cider
 (setq cider-show-error-buffer 'except-in-repl)
 
 (with-eval-after-load "cider"
@@ -363,6 +364,7 @@
 ;;   :hook (after-init . modus-themes-load-operandi)
 ;;   :bind ("C-c t" . modus-themes-toggle))
 
+;; slime
 (setq
  slime-truncate-lines nil
  slime-net-coding-system 'utf-8-unix
@@ -479,8 +481,7 @@
 ;; (advice-add 'cider-repl-create :around 'call-with-repl-window)
 ;; (advice-add 'cider-switch-to-repl-buffer :around 'call-with-repl-window)
 
-;; ;; search
-
+;; search
 (setenv "FZF_DEFAULT_COMMAND" "fd -LH")
 
 (defun universal-argument-provided? ()
@@ -503,8 +504,7 @@
     (counsel-ag "" dir " --hidden --follow " (concat "ag in " dir ": "))))
 
 
-;; ;;;; generic utilities
-
+;; generic utilities
 (defun my/comment-or-uncomment ()
   (interactive)
   (if (region-active-p)
