@@ -73,16 +73,12 @@
         (dired "." (concat dired-listing-switches "a")))
     (setf dired-listing-switches dired-actual-switches))
   (define-key dired-mode-map (kbd "M-h") 'dired-toggle-hidden)
-  (define-key dired-mode-map "N" nil)
-  (define-key dired-mode-map "n" nil)
   (define-key dired-mode-map [mouse-1] 'dired-find-file))
 
 (add-hook 'dired-mode-hook
   (lambda ()
   (dired-hide-details-mode)
-  (setq-local mouse-1-click-follows-link nil)
-  (local-set-key "l" 'dired-find-file)
-  (local-set-key "h" 'dired-up-directory)))
+  (setq-local mouse-1-click-follows-link nil)))
 
 (setq diff-font-lock-syntax nil)
 
