@@ -21,6 +21,7 @@
 
 (rplaca mouse-wheel-scroll-amount 2)
 (setf mouse-wheel-progressive-speed nil)
+
 (put 'if 'lisp-indent-function 4)
 (put 'if-let 'lisp-indent-function 4)
 
@@ -32,10 +33,10 @@
     (define-key tetris-mode-map "z" 'tetris-rotate-next)
     (define-key tetris-mode-map "x" 'tetris-rotate-prev)))
 
-(add-hook 'after-init-hook
-  (lambda ()
-    (diminish 'auto-revert-mode)
-    (diminish 'eldoc-mode)))
+;; (add-hook 'after-init-hook
+;;   (lambda ()
+;;     (diminish 'auto-revert-mode)
+;;     (diminish 'eldoc-mode)))
 
 (add-hook 'evil-mode-hook
   (lambda ()
@@ -57,28 +58,27 @@
         ("NOTE" 0 '(:foreground "dark green" :weight bold) t)))))
 
 ;; projectile
-(setq projectile-enable-caching t
-      projectile-completion-system 'ivy
-      projectile-track-known-projects-automatically nil)
+;; (setq projectile-enable-caching t
+;;       projectile-completion-system 'ivy
+;;       projectile-track-known-projects-automatically nil)
 
-(add-hook 'after-init-hook
-  (lambda ()
-    (projectile-mode)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)))
+;; (add-hook 'after-init-hook
+;;   (lambda ()
+;;     (projectile-mode)
+;;     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)))
 
 ;; magit
-(setq magit-completing-read-function 'ivy-completing-read
-      magit-define-global-key-bindings nil)
+;; (setq magit-completing-read-function 'ivy-completing-read
+;;       magit-define-global-key-bindings nil)
 
-(add-hook 'magit-mode-hook
-  (lambda ()
-    (dotimes (i 4)
-      (let* ((n (1+ i))
-             (command (intern (format "magit-section-show-level-%i-all" n))))
-        (define-key magit-section-mode-map (kbd (format "M-%i" n)) nil)
-        (define-key magit-section-mode-map (kbd (format "C-%i" n)) command)))))
+(setq magit-define-global-key-bindings nil)
 
-
+(with-eval-after-load "magit"
+  (dotimes (i 4)
+    (let* ((n (1+ i))
+           (command (intern (format "magit-section-show-level-%i-all" n))))
+      (define-key magit-section-mode-map (kbd (format "M-%i" n)) nil)
+      (define-key magit-section-mode-map (kbd (format "C-%i" n)) command))))
 
 ;; vc-annotate
 (with-eval-after-load "vc-annotate"
@@ -96,18 +96,18 @@
         (vc-annotate-toggle-annotation-visibility*))))
 
 ;; winum
-(add-hook 'after-init-hook
-  (lambda ()
-    (winum-mode)
-    (dotimes (i 9)
-      (let* ((n (1+ i))
-             (key (kbd (format "M-%i" n)))
-             (command (intern (format "winum-select-window-%i" n))))
-        (with-eval-after-load "diff"
-          (define-key diff-mode-map key nil))
-        (with-eval-after-load "term"
-          (define-key term-raw-map key command))
-        (global-set-key key command)))))
+;; (add-hook 'after-init-hook
+;;   (lambda ()
+;;     (winum-mode)
+;;     (dotimes (i 9)
+;;       (let* ((n (1+ i))
+;;              (key (kbd (format "M-%i" n)))
+;;              (command (intern (format "winum-select-window-%i" n))))
+;;         (with-eval-after-load "diff"
+;;           (define-key diff-mode-map key nil))
+;;         (with-eval-after-load "term"
+;;           (define-key term-raw-map key command))
+;;         (global-set-key key command)))))
 
 ;; dired
 (setq
@@ -142,10 +142,10 @@
     (setq-local before-save-hook nil)))
 
 ;; ivy
-(add-hook 'after-init-hook
-  (lambda ()
-    (ivy-mode t)
-    (counsel-mode)))
+;; (add-hook 'after-init-hook
+;;   (lambda ()
+;;     (ivy-mode t)
+;;     (counsel-mode)))
 
 ;; emacs
 (defun state-dir (dir)
@@ -168,7 +168,7 @@
  custom-file null-device
  use-dialog-box nil
  require-final-newline t
- display-line-numbers-type 'relative
+ display-line-numbers-type t
  scroll-margin 4
  scroll-conservatively 1000
  initial-scratch-message ""
@@ -177,7 +177,6 @@
  delete-old-versions t
  backup-directory-alist `((".*" . ,(state-dir "backups")))
  auto-save-file-name-transforms `((".*" ,(state-dir "auto-save") t))
- auto-save-list-file-prefix (state-dir "auto-save")
  indent-tabs-mode nil
  tab-width 4
  column-number-mode t
@@ -199,17 +198,17 @@
     (set-language-environment "UTF-8")
     (add-to-list 'permanently-enabled-local-variables 'mode)))
 
-(add-hook 'before-save-hook
-  (lambda ()
-    (delete-trailing-whitespace)))
+;; (add-hook 'before-save-hook
+;;   (lambda ()
+;;     (delete-trailing-whitespace)))
 
 (add-hook 'before-save-hook
   (lambda ()
     (executable-make-buffer-file-executable-if-script-p)))
 
-(add-hook 'prog-mode-hook
-  (lambda ()
-    (display-line-numbers-mode)))
+;; (add-hook 'prog-mode-hook
+;;   (lambda ()
+;;     (display-line-numbers-mode)))
 
 ;; recentf
 (with-eval-after-load "recentf"
@@ -225,25 +224,30 @@
   (add-hook 'buffer-list-update-hook 'recentf-save-current-buffer))
 
 ;; evil
-(setq
- evil-want-C-u-scroll t
- evil-kill-on-visual-paste nil
- evil-undo-system 'undo-redo
- evil-want-keybinding nil)
+;; (setq
+;;  evil-want-C-u-scroll t
+;;  evil-kill-on-visual-paste nil
+;;  evil-undo-system 'undo-redo
+;;  evil-want-keybinding nil)
 
-(with-eval-after-load "evil"
-  (evil-set-initial-state 'help-mode 'emacs)
-  (evil-global-set-key 'insert (kbd "C-r") nil)
-  (dolist (state '(motion insert))
-    (evil-global-set-key state (kbd "C-e") nil))
-  (evil-global-set-key 'insert (kbd "C-a") nil)
-  (evil-global-set-key 'motion (kbd "C-i") nil)
-  (evil-global-set-key 'insert (kbd "C-k") nil)
-  (evil-global-set-key 'normal (kbd "M-.") nil)
-  (add-to-list 'evil-buffer-regexps (cons (regexp-opt '("*Warnings*")) 'emacs)))
-
-;; xref
-(add-hook 'xref-after-update-hook 'evil-emacs-state)
+;; (with-eval-after-load "evil"
+;;   (evil-set-initial-state 'help-mode 'emacs)
+;;   (evil-set-initial-state 'cider-stacktrace-mode 'emacs)
+;;   (evil-global-set-key 'insert (kbd "C-r") nil)
+;;   (dolist (state '(motion insert))
+;;     (evil-global-set-key state (kbd "C-e") nil))
+;;   (evil-global-set-key 'insert (kbd "C-a") nil)
+;;   (evil-global-set-key 'motion (kbd "C-i") nil)
+;;   (evil-global-set-key 'insert (kbd "C-k") nil)
+;;   (evil-global-set-key 'normal (kbd "M-.") nil)
+;;   (add-to-list 'evil-buffer-regexps
+;;                (cons (regexp-opt '("*Warnings*")) 'emacs))
+;;   (add-to-list 'evil-buffer-regexps
+;;                (cons (regexp-opt '("*slime-description*")) 'emacs))
+;;   (add-to-list 'evil-buffer-regexps
+;;                (cons (regexp-opt '("*xref*")) 'emacs))
+;;   ;; xref
+;;   (add-hook 'xref-after-update-hook 'evil-emacs-state))
 
 ;; This packages' code is unreasonably slow. I should rewrite it to be faster.
 ;; evil-collection
@@ -258,41 +262,41 @@
 ;;   (evil-collection-term-setup))
 
 ;; anzu
-(cl-labels ((setup-anzu (&rest args)
-              (require 'anzu)
-              (require 'evil-anzu)
-              (global-anzu-mode t)
-              (advice-remove 'evil-search #'setup-anzu)))
-  (advice-add 'evil-search :before #'setup-anzu))
+;; (cl-labels ((setup-anzu (&rest args)
+;;               (require 'anzu)
+;;               (require 'evil-anzu)
+;;               (global-anzu-mode t)
+;;               (advice-remove 'evil-search #'setup-anzu)))
+;;   (advice-add 'evil-search :before #'setup-anzu))
 
 ;; company
-(setq
- company-dabbrev-downcase nil
- company-dabbrev-ignore-case t
- company-minimum-prefix-length 1
- company-show-numbers 'left)
+;; (setq
+;;  company-dabbrev-downcase nil
+;;  company-dabbrev-ignore-case t
+;;  company-minimum-prefix-length 1
+;;  company-show-numbers 'left)
 
-(add-hook 'after-init-hook
-  (lambda ()
-    (global-company-mode)))
+;; (add-hook 'after-init-hook
+;;   (lambda ()
+;;     (global-company-mode)))
 
 ;; which-key
-(setq which-key-dont-use-unicode t)
+;; (setq which-key-dont-use-unicode t)
 
-(let ((done nil))
-  (add-hook 'pre-command-hook
-    (lambda ()
-      (unless done
-        (which-key-mode)
-        (setq done t)))))
+;; (let ((done nil))
+;;   (add-hook 'pre-command-hook
+;;     (lambda ()
+;;       (unless done
+;;         (which-key-mode)
+;;         (setq done t)))))
 
 ;; editorconfig
-(let ((done nil))
-  (add-hook 'find-file-hook
-    (lambda ()
-      (unless done
-        (editorconfig-mode t)
-        (setq done t)))))
+;; (let ((done nil))
+;;   (add-hook 'find-file-hook
+;;     (lambda ()
+;;       (unless done
+;;         (editorconfig-mode t)
+;;         (setq done t)))))
 
 ;; ;; remove ?
 ;; (use-package flycheck
@@ -301,11 +305,11 @@
 ;;   :config (global-flycheck-mode))
 
 ;; flycheck
-(add-hook 'after-init-hook 'global-flycheck-mode)
+;; (add-hook 'after-init-hook 'global-flycheck-mode)
 
 ;; yaml
-(with-eval-after-load "yaml-mode"
-  (add-hook 'yaml-mode-hook 'display-line-numbers-mode))
+;; (with-eval-after-load "yaml-mode"
+;;   (add-hook 'yaml-mode-hook 'display-line-numbers-mode))
 
 ;; nix
 (with-eval-after-load "nix-mode"
@@ -326,7 +330,6 @@
 
 (with-eval-after-load "cider"
   (define-key cider-repl-mode-map (kbd "C-c M-o") 'cider-repl-clear-buffer)
-  (evil-set-initial-state 'cider-stacktrace-mode 'emacs)
   (cl-flet
       ((fix-slime-conflict ()
          ;; should fix slime-company itself
@@ -370,8 +373,9 @@
  slime-truncate-lines nil
  slime-net-coding-system 'utf-8-unix
  inferior-lisp-program "sbcl --disable-ldb --dynamic-space-size 4096"
- slime-contribs '(slime-asdf slime-company slime-quicklisp slime-fancy)
- slime-company-completion 'fuzzy
+ ;; slime-contribs '(slime-asdf slime-company slime-quicklisp slime-fancy)
+ slime-contribs '(slime-asdf slime-quicklisp slime-fancy)
+ ;; slime-company-completion 'fuzzy
  slime-repl-auto-right-margin t
  slime-repl-history-size 10000
  common-lisp-hyperspec-root "@clhs@/HyperSpec/"
@@ -379,8 +383,6 @@
 
 (with-eval-after-load "slime"
   (define-key slime-mode-map (kbd "C-c s") 'slime-selector)
-  (add-to-list 'evil-buffer-regexps
-               (cons (regexp-opt '("*slime-description*")) 'emacs))
   ;; (advice-add 'slime :around 'call-with-repl-window)
   ;; (advice-add 'slime-repl :around 'call-with-repl-window)
   (define-key slime-mode-map (kbd "C-c C-z") 'slime-repl)
@@ -483,26 +485,26 @@
 ;; (advice-add 'cider-switch-to-repl-buffer :around 'call-with-repl-window)
 
 ;; search
-(setenv "FZF_DEFAULT_COMMAND" "fd -LH")
+;; (setenv "FZF_DEFAULT_COMMAND" "fd -LH")
 
 (defun universal-argument-provided? ()
   (>= (prefix-numeric-value current-prefix-arg) 4))
 
-(defun guess-directory (cmd-name)
-  (if (universal-argument-provided?)
-      (counsel-read-directory-name (concat cmd-name " in directory: "))
-      (or (if (featurep 'projectile) (projectile-project-root))
-          default-directory)))
+;; (defun guess-directory (cmd-name)
+;;   (if (universal-argument-provided?)
+;;       (counsel-read-directory-name (concat cmd-name " in directory: "))
+;;       (or (if (featurep 'projectile) (projectile-project-root))
+;;           default-directory)))
 
-(defun counsel-fzf-in-project ()
-  (interactive)
-  (let ((dir (guess-directory "fzf")))
-    (counsel-fzf "" dir (concat "fzf in " dir ": "))))
+;; (defun counsel-fzf-in-project ()
+;;   (interactive)
+;;   (let ((dir (guess-directory "fzf")))
+;;     (counsel-fzf "" dir (concat "fzf in " dir ": "))))
 
-(defun counsel-ag-in-project ()
-  (interactive)
-  (let ((dir (guess-directory "ag")))
-    (counsel-ag "" dir " --hidden --follow " (concat "ag in " dir ": "))))
+;; (defun counsel-ag-in-project ()
+;;   (interactive)
+;;   (let ((dir (guess-directory "ag")))
+;;     (counsel-ag "" dir " --hidden --follow " (concat "ag in " dir ": "))))
 
 
 ;; generic utilities
@@ -532,13 +534,15 @@
       (exit-minibuffer))
       (select-window (minibuffer-window)))
 
-(defun bash ()
-  (interactive)
-  (ansi-term "bash"))
+;; (defun bash ()
+;;   (interactive)
+;;   (ansi-term "bash"))
 
 (defun xdg-open ()
   (interactive)
   (start-process "xdg-open" nil "xdg-open" (ffap-string-at-point)))
+
+(global-set-key (kbd "M-o") 'other-window)
 
 ;; keys
 (global-set-key (kbd "<f1>")  'toggle-repl-window)

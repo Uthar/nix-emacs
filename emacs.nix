@@ -81,26 +81,27 @@ in emacsWithPackages(epkgs:
     [
 
     # The actual elisp code that Emacs will run on startup.
+    # TODO
     defaultEl
 
     # Ivy is easier to use than the built-in completion, and is not super heavy.
     # Counsel replaces a bunch of built in interaction functions to use Ivy.
-    ivy
-    counsel
+    # ivy
+    # counsel
 
     # Convenience for having completion drop-down menus.
-    company
+    # company
 
     # Convenience for visually displaying compiler warnings in the source code.
-    flycheck'
+    # flycheck'
 
     # Convenience package for showing available key bindings.
-    which-key
+    # which-key
 
     # Ag and Ripgrep are external programs, but are tremendously more performant
     # than the built-in elisp utilities, which makes the hassle worth it.
-    ag
-    rg
+    # ag
+    # rg
 
     # Direnv is a convenience utility for having per-directory shell hooks.
     # This package simply makes that work with Emacs' own find-file.
@@ -108,28 +109,28 @@ in emacsWithPackages(epkgs:
 
     # Support for .editorconfig files.
     # Not strictly necessary, but useful for polyglot projects.
-    editorconfig
+    # editorconfig
 
     # This library makes it possible to hide minor modes from the mode line.
     # it's useful to make me forget how much crap I am actually running.
-    diminish
+    # diminish
 
     # Minor visual nicety: show form feed characters as vertical lines.
     # This is a buggy package: the display often breaks by overflowing to the
     # next line.
     # I should replace this with a simple font-lock configuration instead.
-    page-break-lines
+    # page-break-lines
 
     # Addon to grep mode that allows editing and saving the matches.
     # Analogous to the built-in wdired mode.
     wgrep
 
     # Packages for emulating Vim
-    anzu
-    evil-anzu
-    evil
-    evil-matchit
-    evil-surround
+    # anzu
+    # evil-anzu
+    # evil
+    # evil-matchit
+    # evil-surround
     # evil-collection
 
     # Convenience modes for working with programming languages.
@@ -137,14 +138,14 @@ in emacsWithPackages(epkgs:
     # In some cases even crazy things like debuggers and such.
     cider'
     glsl-mode
-    go-mode
-    groovy-mode
+    # go-mode
+    # groovy-mode
     # lsp-mode
     # lsp-python-ms
     nix-mode
     slime'
-    slime-company
-    terraform-mode
+    # slime-company
+    # terraform-mode
     yaml-mode
 
     # Version control
@@ -159,7 +160,7 @@ in emacsWithPackages(epkgs:
 
     # Minor convenience - display window numbers in the mode line.
     # Primarily useful for fast switching via numbered keyboard shortcuts.
-    winum
+    # winum
 
     # Very small package that simply adds a function to switch between the
     # built-in dark and light modus themes - modus-operandi and modus-vivendi.
@@ -167,7 +168,7 @@ in emacsWithPackages(epkgs:
 
     # Utilities for managing "projects", which are simply explicitly named
     # directories.
-    projectile
+    # projectile
 
   ]
 )
