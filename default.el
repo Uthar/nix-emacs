@@ -486,8 +486,7 @@
 
 ;; search
 ;; (setenv "FZF_DEFAULT_COMMAND" "fd -LH")
-
-(defun universal-argument-provided? ()
+(defun universal-argument-provided-p ()
   (>= (prefix-numeric-value current-prefix-arg) 4))
 
 ;; (defun guess-directory (cmd-name)
@@ -530,7 +529,7 @@
 
 (defun select-or-exit-minibuffer ()
   (interactive)
-  (if (universal-argument-provided?)
+  (if (universal-argument-provided-p)
       (exit-minibuffer))
       (select-window (minibuffer-window)))
 
