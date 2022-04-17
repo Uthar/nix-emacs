@@ -13,7 +13,8 @@
     (message "Emacs ready in %s with %d garbage collections."
              (emacs-init-time)
              gcs-done)
-    (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value)))))
+    (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value)))
+    (load-theme 'wombat)))
 
 ;; Disable impure packages.
 ;; The load path is instead built with Nix from emacs.nix.
