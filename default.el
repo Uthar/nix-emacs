@@ -45,6 +45,7 @@
         ("NOTE" 0 '(:foreground "dark green" :weight bold) t)))))
 
 (use-package projectile
+  :diminish
   :custom
   (projectile-enable-caching t)
   (projectile-completion-system 'ivy)
