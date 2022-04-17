@@ -215,6 +215,7 @@
   (evil-kill-on-visual-paste nil)
   (evil-undo-system 'undo-redo)
   (evil-want-keybinding nil)
+  (evil-auto-indent nil)
   :config
   (evil-set-initial-state 'help-mode 'emacs)
   (evil-mode 1)
