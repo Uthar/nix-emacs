@@ -130,8 +130,8 @@
   (lambda ()
   (dired-hide-details-mode)
   (setq-local mouse-1-click-follows-link nil)
-  (evil-local-set-key 'normal "l" 'dired-find-file)
-  (evil-local-set-key 'normal "h" 'dired-up-directory)))
+  (local-set-key "l" 'dired-find-file)
+  (local-set-key "h" 'dired-up-directory)))
 
 ;; diff
 (setq diff-font-lock-syntax nil)
