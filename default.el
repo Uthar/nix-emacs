@@ -188,6 +188,7 @@
   (advice-add 'display-startup-echo-area-message :around 'identity)
   (set-language-environment "UTF-8")
   :hook
+  (after-init . (lambda () (load-theme 'wombat)))
   (after-save . executable-make-buffer-file-executable-if-script-p)
   (prog-mode . display-line-numbers-mode))
 
