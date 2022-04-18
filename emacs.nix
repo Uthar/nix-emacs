@@ -24,7 +24,6 @@ let
       substituteAllInPlace $out/share/emacs/site-lisp/default.el
     '');
 
-
   emacs' =
     (pkgs.emacs.override { nativeComp = true; srcRepo = true; })
       .overrideAttrs (o: {
@@ -67,56 +66,37 @@ in emacsWithPackages(epkgs:
 
   [
     defaultEl
-    modus-themes
     efsl
   ]
 
   ++
 
   (with epkgs.elpaPackages; [
-    company
-    counsel
-    ivy
-    undo-tree
     which-key
+    counsel
   ])
 
   ++
 
   (with epkgs.melpaPackages; [
-    ag
-    anzu
     (withPatches cider [ ./patches/cider-return-buffer-in-switch-to-repl-buffer.patch ])
-    company-terraform
     diminish
     (withPatches direnv [ ./patches/direnv-el-message-not-warning.patch ])
     editorconfig
     evil
-    evil-anzu
-    evil-collection
     evil-matchit
-    evil-surround
-    (withPatches flycheck [ ./patches/flycheck-dont-message-suspicious.patch ])
     glsl-mode
-    go-mode
     groovy-mode
-    hl-todo
-    lsp-mode
-    lsp-python-ms
     magit
     nix-mode
-    page-break-lines
     paredit
-    projectile
     rg
-    ripgrep
+    fzf
     (withPatches slime [ ./patches/slime-cl-indent-other-braces.patch ])
-    slime-company
     terraform-mode
     use-package
     vc-fossil
     wgrep
-    winum
     yaml-mode
   ])
 

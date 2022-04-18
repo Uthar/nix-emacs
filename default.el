@@ -1,7 +1,8 @@
+(setf use-package-expand-minimally t
+      use-package-use-theme nil)
+
 (eval-when-compile
-  (require 'use-package)
-  (setf use-package-expand-minimally t
-        use-package-use-theme nil))
+  (require 'use-package))
 
 (rplaca mouse-wheel-scroll-amount 2)
 (setf mouse-wheel-progressive-speed nil)
@@ -17,26 +18,13 @@
   (define-key tetris-mode-map "z" 'tetris-rotate-next)
   (define-key tetris-mode-map "x" 'tetris-rotate-prev))
 
-(use-package diminish)
-
-(diminish 'auto-revert-mode)
-(diminish 'eldoc-mode)
+(use-package direnv
+  :custom (direnv-always-show-summary nil)
+  :hook (prog-mode . direnv-mode))
 
 (use-package evil-matchit
   :after evil
   :config (global-evil-matchit-mode))
-
-(use-package page-break-lines
-  :diminish
-  :config (global-page-break-lines-mode))
-
-(use-package direnv
-  :custom (direnv-always-show-summary nil)
-  :config (direnv-mode))
-
-(use-package rg)
-
-(use-package wgrep)
 
 (add-hook 'prog-mode-hook
   (lambda ()
@@ -44,29 +32,13 @@
 	  '(("TODO" 0 '(:foreground "red" :weight bold) t)
         ("NOTE" 0 '(:foreground "dark green" :weight bold) t)))))
 
-(use-package projectile
-  :diminish
-  :custom
-  (projectile-enable-caching t)
-  (projectile-completion-system 'ivy)
-  (projectile-track-known-projects-automatically nil)
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :config (projectile-mode))
-
-(use-package efsl)
+(use-package efsl
+  :commands efsl)
 
 (use-package magit
+  :commands magit
   :custom
-  (magit-completing-read-function 'ivy-completing-read)
-  (magit-define-global-key-bindings nil)
-  :hook
-  (after-save . magit-after-save-refresh-status)
-  :config
-  (dotimes (i 4)
-    (let ((n (1+ i)))
-      (define-key magit-section-mode-map (kbd (format "M-%i" n)) nil)
-      (define-key magit-section-mode-map (kbd (format "C-%i" n))
-        (intern (format "magit-section-show-level-%i-all" n))))))
+  (magit-define-global-key-bindings nil))
 
 (defun toggle-hook (hook function)
   (if (and (consp (symbol-value hook))
@@ -86,17 +58,10 @@
       (vc-annotate-toggle-annotation-visibility)
       (vc-annotate-toggle-annotation-visibility*))))
 
-(use-package winum
-  :config
-  (require 'term)
-  (dotimes (i 9)
-    (let* ((n (1+ i))
-           (key (kbd (format "M-%i" n)))
-           (command (intern (format "winum-select-window-%i" n))))
-      (define-key diff-mode-map key nil)
-      (define-key term-raw-map key command)
-      (global-set-key key command)))
-  (winum-mode))
+(use-package windmove
+  :hook
+  (after-init . windmove-default-keybindings)
+  (after-init . windmove-swap-states-default-keybindings))
 
 (defun dired-toggle-hidden ()
   (interactive)
@@ -111,16 +76,16 @@
   (dired-listing-switches "--group-directories-first -lh")
   :config
   (define-key dired-mode-map (kbd "M-h") 'dired-toggle-hidden)
-  (define-key dired-mode-map "N" nil)
-  (define-key dired-mode-map "n" nil)
   (define-key dired-mode-map [mouse-1] 'dired-find-file)
   :hook
   (dired-mode . dired-hide-details-mode)
   (dired-mode
    . (lambda ()
        (setq-local mouse-1-click-follows-link nil)
-       (evil-local-set-key 'normal "l" 'dired-find-file)
-       (evil-local-set-key 'normal "h" 'dired-up-directory))))
+       (local-set-key "j" 'dired-next-line)
+       (local-set-key "k" 'dired-previous-line)
+       (local-set-key "l" 'dired-find-file)
+       (local-set-key "h" 'dired-up-directory))))
 
 (use-package diff
   :custom (diff-font-lock-syntax nil)
@@ -129,14 +94,6 @@
    . (lambda ()
        (setq-local require-final-newline nil)
        (setq-local before-save-hook nil))))
-
-(use-package ivy
-  :diminish
-  :config (ivy-mode t))
-
-(use-package counsel
-  :diminish
-  :config (counsel-mode))
 
 (defun state-dir (dir)
   (expand-file-name (concat user-emacs-directory dir "/")))
@@ -185,12 +142,11 @@
   (recentf-mode)
   (savehist-mode)
   (context-menu-mode)
-  (advice-add 'display-startup-echo-area-message :around 'identity)
   (set-language-environment "UTF-8")
   :hook
-  (before-save . delete-trailing-whitespace)
-  (after-save . executable-make-buffer-file-executable-if-script-p)
-  (prog-mode . display-line-numbers-mode))
+  (after-init . fido-vertical-mode)
+  (after-init . (lambda () (load-theme 'wombat)))
+  (after-save . executable-make-buffer-file-executable-if-script-p))
 
 ;;;; recentf
 
@@ -217,36 +173,16 @@
   (evil-undo-system 'undo-redo)
   (evil-want-keybinding nil)
   (evil-move-beyond-eol t)
-  (evil-buffer-regexps '((".*" . emacs)))
+  :hook
+  (prog-mode . evil-local-mode)
   :config
-  (evil-mode 1)
-  (evil-global-set-key 'insert (kbd "C-r") nil)
-  (dolist (state '(motion insert))
-    (qevil-global-set-key state (kbd "C-e") nil))
-  (evil-global-set-key 'insert (kbd "C-a") nil)
-  (evil-global-set-key 'motion (kbd "C-i") nil)
-  (evil-global-set-key 'insert (kbd "C-k") nil)
-  (evil-global-set-key 'normal (kbd "M-.") nil))
-
-(use-package evil-surround
-  :after evil
-  :config (global-evil-surround-mode 1))
-
-(use-package anzu
-  :diminish
-  :config (global-anzu-mode t))
-
-(use-package evil-anzu
-  :after evil)
-
-(use-package company
-  :custom
-  (company-dabbrev-downcase nil)
-  (company-dabbrev-ignore-case t)
-  (company-minimum-prefix-length 1)
-  (company-show-numbers 'left)
-  :diminish
-  :hook (after-init . global-company-mode))
+  (dolist (state '(motion replace operator visual insert normal))
+    (evil-global-set-key state (kbd "C-r") nil)
+    (evil-global-set-key state (kbd "C-e") nil)
+    (evil-global-set-key state (kbd "C-a") nil)
+    (evil-global-set-key state (kbd "C-i") nil)
+    (evil-global-set-key state (kbd "C-k") nil)
+    (evil-global-set-key state (kbd "M-.") nil)))
 
 (use-package which-key
   :diminish
@@ -256,27 +192,6 @@
 (use-package editorconfig
   :diminish
   :config (editorconfig-mode t))
-
-;; remove ?
-(use-package flycheck
-  :custom (flycheck-disabled-checkers '(emacs-lisp-checkdoc))
-  :diminish
-  :config (global-flycheck-mode))
-
-
-;;;; programming language support
-
-(use-package glsl-mode)
-
-(use-package terraform-mode
-  :mode "\\.tf\\'")
-
-(use-package company-terraform
-  :after (company terraform-mode)
-  :config (company-terraform-init))
-
-(use-package yaml-mode
-  :hook (yaml-mode . display-line-numbers-mode))
 
 (use-package nix-mode
   :mode "\\.nix\\'"
@@ -293,66 +208,29 @@
 
   (define-key nix-mode-map (kbd "C-x n h") 'nix-prefetch-tarball-at-point))
 
-(use-package groovy-mode
-  :mode "\\.groovy\\'")
-
-(use-package go-mode)
-
 (use-package cider
+  :commands (cider-jack-in-clj cider-jack-in-cljs
+             cider-connect-clj cider-connect-cljs)
   :custom
   (cider-show-error-buffer 'except-in-repl)
   :config
-  (define-key cider-repl-mode-map (kbd "C-c M-o") 'cider-repl-clear-buffer)
-  :hook
-  ((clojure-mode clojurescript-mode)
-   . (lambda ()
-       ;; should fix slime-company itself
-       (setq-local company-backends (remove 'company-slime company-backends)))))
-
-(use-package lsp-mode
-  :commands lsp
-  :custom
-  (lsp-keymap-prefix "C-c l")
-  (lsp-restart 'ignore)
-  :hook
-  (((c-mode c++-mode python-mode go-mode) . lsp)
-   (lsp-mode . lsp-enable-which-key-integration))
-  :config
-  (defun direnv-update-advice (&rest r)
-    (direnv-update-directory-environment))
-  (advice-add 'lsp :before 'direnv-update-advice))
-
-(use-package lsp-python-ms
-  :after lsp-mode
-  :config
-  (defun set-python-ms-executable (&rest r)
-    (setf lsp-python-ms-executable (executable-find "python-language-server")))
-  (advice-add 'lsp :before 'set-python-ms-executable '((depth . 100))))
-
-(use-package python
-  :commands python-mode
-  :config
-  (advice-add 'python-shell-make-comint :around 'call-with-repl-window)
-  (advice-add 'python-shell-switch-to-shell :around 'call-with-repl-window))
+  (define-key cider-repl-mode-map (kbd "C-c M-o") 'cider-repl-clear-buffer))
 
 (use-package slime
-  :commands slime
+  :commands (slime slime-connect)
   :custom
   (slime-truncate-lines nil)
   (slime-net-coding-system 'utf-8-unix)
   (inferior-lisp-program "sbcl --disable-ldb --dynamic-space-size 4096")
-  (slime-contribs '(slime-asdf slime-company slime-quicklisp slime-fancy))
-  (slime-company-completion 'fuzzy)
+  (slime-contribs '(slime-asdf slime-quicklisp slime-fancy))
   (slime-repl-auto-right-margin t)
   (slime-repl-history-size 10000)
   (common-lisp-hyperspec-root "@clhs@/HyperSpec/")
   (common-lisp-hyperspec-symbol-table "@clhs@/HyperSpec/Data/Map_Sym.txt")
   :bind ("C-c s" . 'slime-selector)
   :config
-  (advice-add 'slime :around 'call-with-repl-window)
-  (advice-add 'slime-repl :around 'call-with-repl-window)
-  (bind-key (kbd "C-c C-z") 'slime-repl 'slime-mode-map)
-  (bind-key (kbd "C-c h") 'slime-hyperspec-lookup 'slime-mode-map)
+  (define-key slime-mode-map (kbd "C-c C-z") 'slime-repl)
+  (define-key slime-mode-map (kbd "C-c h") 'slime-hyperspec-lookup)
   :hook
   ;; Disable annoying tab completion buffers.
   ;; Careful: both slime-repl and inferior-slime set this.
@@ -375,20 +253,6 @@
   :config
   (define-key slime-presentation-map [mouse-1] 'slime-inspect-presentation-at-mouse))
 
-(use-package slime-cl-indent
-  :after slime
-  :config
-  (setf
-   common-lisp-style-default
-   (define-common-lisp-style "kpg"
-     "Fix the indentation of some Clojure-like macros."
-     (:inherit "modern")
-     (:indentation
-      (-> (as if))
-      (->> (as if))
-      (hash-keys-bind (as destructuring-bind))
-      (dovec (as dolist))))))
-
 (use-package lisp-mode
   :config
   (modify-syntax-entry ?\[ "(]" lisp-mode-syntax-table)
@@ -402,68 +266,7 @@
              paredit-wrap-square
              paredit-meta-doublequote))
 
-;; repl window
-
-(defvar repl-window nil)
-(defvar repl-window-height 15)
-(defvar last-repl-buffer nil)
-
-(defun repl-window-selected? ()
-  (and repl-window (eq repl-window (selected-window))))
-
-(defun save-last-repl-buffer (frame)
-  (when (repl-window-selected?)
-    (setf last-repl-buffer (window-buffer repl-window))))
-
-(add-to-list 'window-buffer-change-functions 'save-last-repl-buffer)
-
-(defun save-repl-window-height (frame)
-  (when repl-window
-    (setf repl-window-height (window-height repl-window))))
-
-(add-to-list 'window-size-change-functions 'save-repl-window-height)
-
-(defun default-repl-buffer ()
-  (ansi-term "bash"))
-
-(defun open-repl-window ()
-  (setf repl-window
-        (split-window
-         (frame-root-window)
-         (- (min repl-window-height
-                 (- (window-height (frame-root-window)) window-min-height)))))
-  (select-window repl-window)
-  (switch-to-buffer (or last-repl-buffer (default-repl-buffer))))
-
-(defun close-repl-window ()
-  (ignore-errors (delete-window repl-window))
-  (setf repl-window nil))
-
-(defun toggle-repl-window ()
-  (interactive)
-  (if repl-window
-      (close-repl-window)
-      (open-repl-window)))
-
-(defun ensure-repl-window ()
-  (if (window-live-p repl-window)
-      (select-window repl-window)
-      (open-repl-window)))
-
-(defun open-buffer-in-repl-window (buffer)
-  (ensure-repl-window)
-  (switch-to-buffer buffer))
-
-(defun call-with-repl-window (fn &rest args)
-  (open-buffer-in-repl-window (save-window-excursion (apply fn args))))
-
-(advice-add 'ansi-term :around 'call-with-repl-window)
-(advice-add 'eshell :around 'call-with-repl-window)
-(advice-add 'cider-repl-create :around 'call-with-repl-window)
-(advice-add 'cider-switch-to-repl-buffer :around 'call-with-repl-window)
-
 ;; search
-
 (setenv "FZF_DEFAULT_COMMAND" "fd -LH")
 
 (defun universal-argument-provided? ()
@@ -474,17 +277,6 @@
       (counsel-read-directory-name (concat cmd-name " in directory: "))
       (or (if (featurep 'projectile) (projectile-project-root))
           default-directory)))
-
-(defun counsel-fzf-in-project ()
-  (interactive)
-  (let ((dir (guess-directory "fzf")))
-    (counsel-fzf "" dir (concat "fzf in " dir ": "))))
-
-(defun counsel-ag-in-project ()
-  (interactive)
-  (let ((dir (guess-directory "ag")))
-    (counsel-ag "" dir " --hidden --follow " (concat "ag in " dir ": "))))
-
 
 ;;;; generic utilities
 
@@ -514,10 +306,6 @@
       (exit-minibuffer))
       (select-window (minibuffer-window)))
 
-(defun bash ()
-  (interactive)
-  (ansi-term "bash"))
-
 (defun xdg-open ()
   (interactive)
   (start-process "xdg-open" nil "xdg-open" (ffap-string-at-point)))
@@ -536,5 +324,3 @@
             ("<f10>" . delete-window)
             ("<f11>" . kill-buffer-and-window)
             ("<f12>" . universal-argument))
-
-(require 'notifications)
