@@ -217,31 +217,16 @@
   (evil-undo-system 'undo-redo)
   (evil-want-keybinding nil)
   (evil-move-beyond-eol t)
+  (evil-buffer-regexps '((".*" . emacs)))
   :config
-  (evil-set-initial-state 'help-mode 'emacs)
   (evil-mode 1)
   (evil-global-set-key 'insert (kbd "C-r") nil)
   (dolist (state '(motion insert))
-    (evil-global-set-key state (kbd "C-e") nil))
+    (qevil-global-set-key state (kbd "C-e") nil))
   (evil-global-set-key 'insert (kbd "C-a") nil)
   (evil-global-set-key 'motion (kbd "C-i") nil)
   (evil-global-set-key 'insert (kbd "C-k") nil)
   (evil-global-set-key 'normal (kbd "M-.") nil))
-
-(use-package xref
-  :hook (xref-after-update . evil-emacs-state))
-
-(use-package evil-collection
-  :after evil
-  :custom
-  (evil-collection-company-use-tng nil)
-  :config
-  (evil-collection-magit-setup)
-  (evil-collection-dired-setup)
-  (evil-collection-help-setup)
-  (evil-collection-company-setup)
-  (evil-collection-term-setup))
-
 
 (use-package evil-surround
   :after evil
@@ -318,7 +303,6 @@
   (cider-show-error-buffer 'except-in-repl)
   :config
   (define-key cider-repl-mode-map (kbd "C-c M-o") 'cider-repl-clear-buffer)
-  (evil-set-initial-state 'cider-stacktrace-mode 'emacs)
   :hook
   ((clojure-mode clojurescript-mode)
    . (lambda ()
@@ -351,11 +335,6 @@
   (advice-add 'python-shell-make-comint :around 'call-with-repl-window)
   (advice-add 'python-shell-switch-to-shell :around 'call-with-repl-window))
 
-(use-package modus-themes
-  :config (modus-themes-load-themes)
-  :hook (after-init . modus-themes-load-operandi)
-  :bind ("C-c t" . modus-themes-toggle))
-
 (use-package slime
   :commands slime
   :custom
@@ -370,8 +349,6 @@
   (common-lisp-hyperspec-symbol-table "@clhs@/HyperSpec/Data/Map_Sym.txt")
   :bind ("C-c s" . 'slime-selector)
   :config
-  (add-to-list 'evil-buffer-regexps
-               (cons (regexp-opt '("*slime-description*")) 'emacs))
   (advice-add 'slime :around 'call-with-repl-window)
   (advice-add 'slime-repl :around 'call-with-repl-window)
   (bind-key (kbd "C-c C-z") 'slime-repl 'slime-mode-map)
