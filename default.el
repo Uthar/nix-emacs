@@ -44,20 +44,10 @@
 	  '(("TODO" 0 '(:foreground "red" :weight bold) t)
         ("NOTE" 0 '(:foreground "dark green" :weight bold) t)))))
 
-(use-package projectile
-  :diminish
-  :custom
-  (projectile-enable-caching t)
-  (projectile-completion-system 'ivy)
-  (projectile-track-known-projects-automatically nil)
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :config (projectile-mode))
-
 (use-package efsl)
 
 (use-package magit
   :custom
-  (magit-completing-read-function 'ivy-completing-read)
   (magit-define-global-key-bindings nil)
   :hook
   (after-save . magit-after-save-refresh-status)
@@ -130,14 +120,6 @@
        (setq-local require-final-newline nil)
        (setq-local before-save-hook nil))))
 
-(use-package ivy
-  :diminish
-  :config (ivy-mode t))
-
-(use-package counsel
-  :diminish
-  :config (counsel-mode))
-
 (defun state-dir (dir)
   (expand-file-name (concat user-emacs-directory dir "/")))
 
@@ -188,6 +170,7 @@
   (advice-add 'display-startup-echo-area-message :around 'identity)
   (set-language-environment "UTF-8")
   :hook
+  (after-init . fido-vertical-mode)
   (after-init . (lambda () (load-theme 'wombat)))
   (after-save . executable-make-buffer-file-executable-if-script-p)
   (prog-mode . display-line-numbers-mode))
@@ -471,19 +454,31 @@
 
 (defun guess-directory (cmd-name)
   (if (universal-argument-provided?)
-      (counsel-read-directory-name (concat cmd-name " in directory: "))
-      (or (if (featurep 'projectile) (projectile-project-root))
+      (read-directory-name (concat cmd-name " in directory: "))
+      (or (ignore-errors (project-root (project-current)))
           default-directory)))
+
+;; Wolałbym użyć wbudowanych funkcji w miejsce
+;; 'counsel-fzf'/'counsel-ag', ale one nie wspierają ekwiwalentu
+;; argumentu ':dynamic-collect' do 'ivy-read'. Dopóki nie dowiem się
+;; jak samemu to zaimplementować, muszę zostawić zależność na
+;; 'counsel'.
 
 (defun counsel-fzf-in-project ()
   (interactive)
   (let ((dir (guess-directory "fzf")))
-    (counsel-fzf "" dir (concat "fzf in " dir ": "))))
+    (fido-vertical-mode -1)
+    (unwind-protect
+        (counsel-fzf "" dir (concat "fzf in " dir ": "))
+      (fido-vertical-mode +1))))
 
 (defun counsel-ag-in-project ()
   (interactive)
   (let ((dir (guess-directory "ag")))
-    (counsel-ag "" dir " --hidden --follow " (concat "ag in " dir ": "))))
+    (fido-vertical-mode -1)
+    (unwind-protect
+        (counsel-ag "" dir " --hidden --follow " (concat "ag in " dir ": "))
+      (fido-vertical-mode +1))))
 
 
 ;;;; generic utilities
