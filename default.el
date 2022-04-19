@@ -212,6 +212,7 @@
   :hook
   (prog-mode . evil-local-mode)
   :config
+  (evil-global-set-key 'insert (kbd "C-[") 'evil-force-normal-state)
   (dolist (state '(motion insert))
     (evil-global-set-key state (kbd "C-e") nil))
   (evil-global-set-key 'insert (kbd "C-a") nil)
