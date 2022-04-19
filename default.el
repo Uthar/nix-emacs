@@ -32,17 +32,9 @@
   :after evil
   :config (global-evil-matchit-mode))
 
-(use-package page-break-lines
-  :diminish
-  :config (global-page-break-lines-mode))
-
 (use-package direnv
   :custom (direnv-always-show-summary nil)
   :config (direnv-mode))
-
-(use-package rg)
-
-(use-package wgrep)
 
 (add-hook 'prog-mode-hook
   (lambda ()
@@ -50,29 +42,22 @@
 	  '(("TODO" 0 '(:foreground "red" :weight bold) t)
         ("NOTE" 0 '(:foreground "dark green" :weight bold) t)))))
 
-(use-package projectile
-  :diminish
-  :custom
-  (projectile-enable-caching t)
-  (projectile-completion-system 'ivy)
-  (projectile-track-known-projects-automatically nil)
-  :bind-keymap ("C-c p" . projectile-command-map)
-  :config (projectile-mode))
-
-(use-package efsl)
+(use-package efsl
+  :commands efsl)
 
 (use-package magit
+  :commands magit
   :custom
   (magit-completing-read-function 'ivy-completing-read)
   (magit-define-global-key-bindings nil)
   :hook
-  (after-save . magit-after-save-refresh-status)
-  :config
-  (dotimes (i 4)
-    (let ((n (1+ i)))
-      (define-key magit-section-mode-map (kbd (format "M-%i" n)) nil)
-      (define-key magit-section-mode-map (kbd (format "C-%i" n))
-        (intern (format "magit-section-show-level-%i-all" n))))))
+  (magit-mode
+   . (lambda ()
+       (dotimes (i 4)
+         (let ((n (1+ i)))
+           (define-key magit-section-mode-map (kbd (format "M-%i" n)) nil)
+           (define-key magit-section-mode-map (kbd (format "C-%i" n))
+             (intern (format "magit-section-show-level-%i-all" n))))))))
 
 (defun toggle-hook (hook function)
   (if (and (consp (symbol-value hook))
@@ -241,15 +226,12 @@
   (evil-global-set-key 'normal (kbd "M-.") nil))
 
 (use-package org
+  :defer
   :hook
   (org-mode
    . (lambda ()
        (evil-local-mode)
        (evil-local-set-key 'motion (kbd "<tab>") 'org-cycle))))
-
-(use-package evil-surround
-  :after evil
-  :config (global-evil-surround-mode 1))
 
 (use-package anzu
   :diminish
@@ -285,15 +267,6 @@
 
 ;;;; programming language support
 
-(use-package glsl-mode)
-
-(use-package terraform-mode
-  :mode "\\.tf\\'")
-
-(use-package company-terraform
-  :after (company terraform-mode)
-  :config (company-terraform-init))
-
 (use-package yaml-mode
   :hook (yaml-mode . display-line-numbers-mode))
 
@@ -312,12 +285,9 @@
 
   (define-key nix-mode-map (kbd "C-x n h") 'nix-prefetch-tarball-at-point))
 
-(use-package groovy-mode
-  :mode "\\.groovy\\'")
-
-(use-package go-mode)
-
 (use-package cider
+  :commands (cider-jack-in-clj cider-jack-in-cljs
+             cider-connect-clj cider-connect-cljs)
   :custom
   (cider-show-error-buffer 'except-in-repl)
   :config
@@ -409,6 +379,7 @@
       (dovec (as dolist))))))
 
 (use-package lisp-mode
+  :after lisp-mode
   :config
   (modify-syntax-entry ?\[ "(]" lisp-mode-syntax-table)
   (modify-syntax-entry ?\] ")[" lisp-mode-syntax-table)
@@ -491,7 +462,7 @@
 (defun guess-directory (cmd-name)
   (if (universal-argument-provided?)
       (counsel-read-directory-name (concat cmd-name " in directory: "))
-      (or (if (featurep 'projectile) (projectile-project-root))
+      (or (ignore-errors (project-root (project-current)))
           default-directory)))
 
 ;; TODO: rename to dwim
