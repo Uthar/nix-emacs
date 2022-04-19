@@ -475,6 +475,7 @@
       (or (if (featurep 'projectile) (projectile-project-root))
           default-directory)))
 
+;; TODO: rename to dwim
 (defun counsel-fzf-in-project ()
   (interactive)
   (let ((dir (guess-directory "fzf")))
