@@ -221,13 +221,25 @@
   :hook
   (prog-mode . evil-local-mode)
   :config
-  (evil-global-set-key 'insert (kbd "C-r") nil)
   (dolist (state '(motion insert))
     (evil-global-set-key state (kbd "C-e") nil))
   (evil-global-set-key 'insert (kbd "C-a") nil)
-  (evil-global-set-key 'motion (kbd "C-i") nil)
   (evil-global-set-key 'insert (kbd "C-k") nil)
+  (dolist (state '(normal motion insert))
+    (evil-global-set-key state (kbd "C-f") nil)
+    (evil-global-set-key state (kbd "C-b") nil)
+    (evil-global-set-key state [remap cua-paste-pop] nil)
+    (evil-global-set-key state [remap yank-pop] nil)
+    (evil-global-set-key state (kbd "C-n") nil)
+    (evil-global-set-key state (kbd "C-p") nil))
   (evil-global-set-key 'normal (kbd "M-.") nil))
+
+(use-package org
+  :hook
+  (org-mode
+   . (lambda ()
+       (evil-local-mode)
+       (evil-local-set-key 'motion (kbd "<tab>") 'org-cycle))))
 
 (use-package evil-surround
   :after evil
