@@ -220,13 +220,13 @@
   :hook
   (prog-mode . evil-local-mode)
   :config
-  (dolist (state '(motion replace operator visual insert normal))
-    (evil-global-set-key state (kbd "C-r") nil)
-    (evil-global-set-key state (kbd "C-e") nil)
-    (evil-global-set-key state (kbd "C-a") nil)
-    (evil-global-set-key state (kbd "C-i") nil)
-    (evil-global-set-key state (kbd "C-k") nil)
-    (evil-global-set-key state (kbd "M-.") nil)))
+  (evil-global-set-key 'insert (kbd "C-r") nil)
+  (dolist (state '(motion insert))
+    (evil-global-set-key state (kbd "C-e") nil))
+  (evil-global-set-key 'insert (kbd "C-a") nil)
+  (evil-global-set-key 'motion (kbd "C-i") nil)
+  (evil-global-set-key 'insert (kbd "C-k") nil)
+  (evil-global-set-key 'normal (kbd "M-.") nil))
 
 (use-package evil-surround
   :after evil
