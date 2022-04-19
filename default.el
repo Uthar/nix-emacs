@@ -1,3 +1,14 @@
+;; -*- lexical-binding: t -*-
+
+(setq gc-cons-threshold most-positive-fixnum)
+
+(add-hook 'emacs-startup-hook
+  (lambda ()
+    (message "Emacs ready in %s with %d garbage collections."
+             (emacs-init-time)
+             gcs-done)
+    (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value)))))
+
 (eval-when-compile
   (require 'use-package)
   (setf use-package-expand-minimally t
@@ -16,11 +27,6 @@
   :config
   (define-key tetris-mode-map "z" 'tetris-rotate-next)
   (define-key tetris-mode-map "x" 'tetris-rotate-prev))
-
-(use-package diminish)
-
-(diminish 'auto-revert-mode)
-(diminish 'eldoc-mode)
 
 (use-package evil-matchit
   :after evil
