@@ -539,3 +539,5 @@
             ("<f12>" . universal-argument))
 
 (require 'notifications)
+
+(global-unset-key (kbd "C-z"))
