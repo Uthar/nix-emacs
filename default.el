@@ -119,8 +119,10 @@
   (dired-mode
    . (lambda ()
        (setq-local mouse-1-click-follows-link nil)
-       (evil-local-set-key 'normal "l" 'dired-find-file)
-       (evil-local-set-key 'normal "h" 'dired-up-directory))))
+       (local-set-key "j" 'dired-next-line)
+       (local-set-key "k" 'dired-previous-line)
+       (local-set-key "l" 'dired-find-file)
+       (local-set-key "h" 'dired-up-directory))))
 
 (use-package diff
   :custom (diff-font-lock-syntax nil)
