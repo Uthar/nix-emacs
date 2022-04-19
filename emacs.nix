@@ -67,7 +67,6 @@ in emacsWithPackages(epkgs:
 
   [
     defaultEl
-    modus-themes
     efsl
   ]
 
@@ -77,7 +76,6 @@ in emacsWithPackages(epkgs:
     company
     counsel
     ivy
-    undo-tree
     which-key
   ])
 
@@ -87,29 +85,22 @@ in emacsWithPackages(epkgs:
     ag
     anzu
     (withPatches cider [ ./patches/cider-return-buffer-in-switch-to-repl-buffer.patch ])
-    company-terraform
     diminish
     (withPatches direnv [ ./patches/direnv-el-message-not-warning.patch ])
     editorconfig
     evil
     evil-anzu
-    evil-collection
     evil-matchit
-    evil-surround
     (withPatches flycheck [ ./patches/flycheck-dont-message-suspicious.patch ])
     glsl-mode
     go-mode
     groovy-mode
-    hl-todo
     lsp-mode
     lsp-python-ms
     magit
     nix-mode
-    page-break-lines
     paredit
-    projectile
     rg
-    ripgrep
     (withPatches slime [ ./patches/slime-cl-indent-other-braces.patch ])
     slime-company
     terraform-mode
