@@ -87,7 +87,8 @@
       (define-key diff-mode-map key nil)
       (define-key term-raw-map key command)
       (global-set-key key command)))
-  (winum-mode))
+  :hook
+  (after-init . winum-mode))
 
 (defun dired-toggle-hidden ()
   (interactive)
