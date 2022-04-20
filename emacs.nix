@@ -19,11 +19,9 @@ let
 
   defaultEl = (runCommand "default.el" { inherit clhs; } ''
       mkdir -p $out/share/emacs/site-lisp
-      substitute ${./default.el} $out/share/emacs/site-lisp/default.el \
-        --replace xsel ${xsel}/bin/xsel
+      cp -v ${./default.el} $out/share/emacs/site-lisp/default.el
       substituteAllInPlace $out/share/emacs/site-lisp/default.el
     '');
-
 
   emacs' =
     (pkgs.emacs.override { nativeComp = true; srcRepo = true; })
@@ -37,14 +35,13 @@ let
         meta = o.meta // { mainProgram = "emacs"; };
       });
 
-  build-elisp-package = { name, src }:
-    runCommand name {} ''
-        mkdir -p $out/share/emacs/site-lisp
-        cp -Tr ${src} $out/share/emacs/site-lisp
-      '';
+  emacsPackages' = pkgs.emacsPackagesFor emacs';
+
+  build-elisp-package = args:
+    emacsPackages'.trivialBuild args;
 
   modus-themes = build-elisp-package {
-    name = "modus-themes";
+    pname = "modus-themes";
     src = fetchTarball {
       url = https://galkowski.xyz/modus-themes-2.0.0.tar;
       sha256 = "122xg6wk2mn1c69kaqkqkgqkbw61n13x3ylwf5q2b2kr60skn1zh";
@@ -52,10 +49,10 @@ let
   };
 
   efsl = build-elisp-package {
-    name = "efsl";
+    pname = "efsl";
     src = fetchTarball {
-      url = "https://fossil.galkowski.xyz/efsl/tarball/b44ab8a12807f9b6/efsl.tgz";
-      sha256 = "09zfmym6ld3cnl5m4y6klbg4s086wymfda292sqhjda0jgca27al";
+      url = "https://fossil.galkowski.xyz/efsl/tarball/266c0f94f70aae6a/efsl.tgz";
+      sha256 = "05zlmmrqffcs4azyw9lq95i7k6zqb947iz2mvgnqfzi15zn63lk9";
     };
   };
 
@@ -65,9 +62,21 @@ let
 
 in emacsWithPackages(epkgs:
 
+  let
+    inherit (epkgs.melpaPackages) cider direnv flycheck slime;
+    cider' = (withPatches cider [ ./patches/cider-return-buffer-in-switch-to-repl-buffer.patch ]);
+    direnv' = (withPatches direnv [ ./patches/direnv-el-message-not-warning.patch ]);
+    flycheck' = (withPatches flycheck [ ./patches/flycheck-dont-message-suspicious.patch ]);
+    slime' = (withPatches slime [ ./patches/slime-cl-indent-other-braces.patch ]);
+  in
+    
   [
     defaultEl
     efsl
+    cider'
+    direnv'
+    flycheck'
+    slime'
   ]
 
   ++
@@ -82,28 +91,17 @@ in emacsWithPackages(epkgs:
   ++
 
   (with epkgs.melpaPackages; [
-    ag
     anzu
-    (withPatches cider [ ./patches/cider-return-buffer-in-switch-to-repl-buffer.patch ])
     diminish
-    (withPatches direnv [ ./patches/direnv-el-message-not-warning.patch ])
     editorconfig
     evil
     evil-anzu
     evil-matchit
-    (withPatches flycheck [ ./patches/flycheck-dont-message-suspicious.patch ])
     glsl-mode
-    go-mode
-    groovy-mode
-    lsp-mode
-    lsp-python-ms
     magit
     nix-mode
-    paredit
     rg
-    (withPatches slime [ ./patches/slime-cl-indent-other-braces.patch ])
     slime-company
-    terraform-mode
     use-package
     vc-fossil
     wgrep

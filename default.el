@@ -1,14 +1,13 @@
 ;; -*- lexical-binding: t -*-
 
+;; Make startup faster by inhibiting GC
 (setq gc-cons-threshold most-positive-fixnum)
-
 (add-hook 'emacs-startup-hook
   (lambda ()
-    (message "Emacs ready in %s with %d garbage collections."
-             (emacs-init-time)
-             gcs-done)
+    (message "booted in %s" (emacs-init-time))
     (setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value)))))
 
+;; TODO delete
 (eval-when-compile
   (require 'use-package)
   (setf use-package-expand-minimally t
@@ -34,7 +33,7 @@
 
 (use-package direnv
   :custom (direnv-always-show-summary nil)
-  :config (direnv-mode))
+  :hook (after-init . direnv-mode))
 
 (add-hook 'prog-mode-hook
   (lambda ()
@@ -78,6 +77,7 @@
       (vc-annotate-toggle-annotation-visibility*))))
 
 (use-package winum
+  :defer
   :config
   (require 'term)
   (dotimes (i 9)
@@ -116,6 +116,7 @@
        (local-set-key "h" 'dired-up-directory))))
 
 (use-package diff
+  :defer
   :custom (diff-font-lock-syntax nil)
   :hook
   (diff-mode
@@ -125,11 +126,11 @@
 
 (use-package ivy
   :diminish
-  :config (ivy-mode t))
+  :hook (after-init . ivy-mode))
 
 (use-package counsel
   :diminish
-  :config (counsel-mode))
+  :hook (after-init . counsel-mode))
 
 (defun state-dir (dir)
   (expand-file-name (concat user-emacs-directory dir "/")))
@@ -236,10 +237,11 @@
 
 (use-package anzu
   :diminish
+  :after evil
   :config (global-anzu-mode t))
 
 (use-package evil-anzu
-  :after evil)
+  :after anzu)
 
 (use-package company
   :custom
@@ -253,17 +255,17 @@
 (use-package which-key
   :diminish
   :custom (which-key-dont-use-unicode t)
-  :config (which-key-mode))
+  :hook (after-init . which-key-mode))
 
 (use-package editorconfig
   :diminish
-  :config (editorconfig-mode t))
+  :hook (after-init . editorconfig-mode))
 
 ;; remove ?
 (use-package flycheck
   :custom (flycheck-disabled-checkers '(emacs-lisp-checkdoc))
   :diminish
-  :config (global-flycheck-mode))
+  :hook (prog-mode . flycheck-mode))
 
 
 ;;;; programming language support
@@ -313,7 +315,7 @@
   (advice-add 'lsp :before 'direnv-update-advice))
 
 (use-package lsp-python-ms
-  :after lsp-mode
+  :defer
   :config
   (defun set-python-ms-executable (&rest r)
     (setf lsp-python-ms-executable (executable-find "python-language-server")))
@@ -341,8 +343,8 @@
   :config
   (advice-add 'slime :around 'call-with-repl-window)
   (advice-add 'slime-repl :around 'call-with-repl-window)
-  (bind-key (kbd "C-c C-z") 'slime-repl 'slime-mode-map)
-  (bind-key (kbd "C-c h") 'slime-hyperspec-lookup 'slime-mode-map)
+  (define-key slime-mode-map (kbd "C-c C-z") 'slime-repl)
+  (define-key slime-mode-map (kbd "C-c h") 'slime-hyperspec-lookup)
   :hook
   ;; Disable annoying tab completion buffers.
   ;; Careful: both slime-repl and inferior-slime set this.
@@ -380,7 +382,7 @@
       (dovec (as dolist))))))
 
 (use-package lisp-mode
-  :after lisp-mode
+  :defer
   :config
   (modify-syntax-entry ?\[ "(]" lisp-mode-syntax-table)
   (modify-syntax-entry ?\] ")[" lisp-mode-syntax-table)
@@ -516,19 +518,21 @@
 
 ;; keys
 
-(bind-keys* ("<f1>" . toggle-repl-window)
-            ("<f2>" . dired-jump)
-            ("<f3>" . counsel-fzf-in-project)
-            ("<f4>" . counsel-ag-in-project)
-            ("<f5>" . previous-buffer)
-            ("<f6>" . next-buffer)
-            ("<f7>" . recentf-open-files)
-            ("<f8>" . select-or-exit-minibuffer)
-            ("<f9>" . kill-current-buffer)
-            ("<f10>" . delete-window)
-            ("<f11>" . kill-buffer-and-window)
-            ("<f12>" . universal-argument))
-
-(require 'notifications)
+(global-set-key (kbd "<f1>") 'toggle-repl-window)
+(global-set-key (kbd "<f2>") 'dired-jump)
+(global-set-key (kbd "<f3>") 'counsel-fzf-in-project)
+(global-set-key (kbd "<f4>") 'counsel-ag-in-project)
+(global-set-key (kbd "<f5>") 'previous-buffer)
+(global-set-key (kbd "<f6>") 'next-buffer)
+(global-set-key (kbd "<f7>") 'recentf-open-files)
+(global-set-key (kbd "<f8>") 'select-or-exit-minibuffer)
+(global-set-key (kbd "<f9>") 'kill-current-buffer)
+(global-set-key (kbd "<f10>") 'delete-window)
+(global-set-key (kbd "<f11>") 'kill-buffer-and-window)
+(global-set-key (kbd "<f12>") 'universal-argument)
 
 (global-unset-key (kbd "C-z"))
+
+(setq echo-keystrokes 0.05)
+(global-so-long-mode)
+(setq read-process-output-max (* 1024 1024))
