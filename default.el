@@ -276,7 +276,7 @@
 
 (use-package yaml-mode
   :hook
-  (yaml-mode . evil-local-mode))
+  (yaml-mode . evil-local-mode)
   (yaml-mode . display-line-numbers-mode))
 
 (use-package nix-mode
