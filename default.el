@@ -134,6 +134,11 @@
   :diminish
   :hook (after-init . counsel-mode))
 
+(use-package swiper
+  :bind
+  (("C-s" . swiper)
+   ("C-r" . swiper)))
+
 (defun state-dir (dir)
   (expand-file-name (concat user-emacs-directory dir "/")))
 
