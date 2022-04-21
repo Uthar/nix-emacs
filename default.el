@@ -225,6 +225,7 @@
     (evil-global-set-key state (kbd "C-e") nil))
   (evil-global-set-key 'insert (kbd "C-a") nil)
   (evil-global-set-key 'insert (kbd "C-k") nil)
+  (evil-global-set-key 'insert (kbd "C-i") 'completion-at-point)
   (dolist (state '(normal motion insert))
     (evil-global-set-key state (kbd "C-f") nil)
     (evil-global-set-key state (kbd "C-b") nil)
