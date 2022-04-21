@@ -111,6 +111,7 @@
   (dired-mode
    . (lambda ()
        (setq-local mouse-1-click-follows-link nil)
+       (local-set-key "/" 'swiper)
        (local-set-key "j" 'dired-next-line)
        (local-set-key "k" 'dired-previous-line)
        (local-set-key "l" 'dired-find-file)
