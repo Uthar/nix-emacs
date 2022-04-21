@@ -237,6 +237,8 @@
        (evil-local-mode)
        (evil-local-set-key 'motion (kbd "<tab>") 'org-cycle))))
 
+(add-hook 'conf-mode-hook 'evil-local-mode)
+
 (use-package anzu
   :diminish
   :after evil
@@ -273,7 +275,9 @@
 ;;;; programming language support
 
 (use-package yaml-mode
-  :hook (yaml-mode . display-line-numbers-mode))
+  :hook
+  (yaml-mode . evil-local-mode))
+  (yaml-mode . display-line-numbers-mode))
 
 (use-package nix-mode
   :mode "\\.nix\\'"
